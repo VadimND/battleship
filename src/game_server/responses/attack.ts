@@ -1,6 +1,6 @@
-import { Game } from 'game_server/database/games';
-import { Database } from '../database/db';
-import { responseTypes, ResponseTypes, sendMessageToUser } from './responses';
+import { Game } from "../database/games";
+import { Database } from "../database/db";
+import { responseTypes, ResponseTypes, sendMessageToUser } from "./responses";
 
 export const responseTemplate = (): ResponseTemplate => {
   const result = {
@@ -8,13 +8,13 @@ export const responseTemplate = (): ResponseTemplate => {
       x: 0,
       y: 0,
     },
-    currentPlayer: '',
-    status: 'miss' as ShotStatus,
+    currentPlayer: "",
+    status: "miss" as ShotStatus,
   };
   return result;
 };
 
-export type ShotStatus = 'miss' | 'killed' | 'shot';
+export type ShotStatus = "miss" | "killed" | "shot";
 
 export type ResponseTemplate = {
   position: {
@@ -25,7 +25,11 @@ export type ResponseTemplate = {
   status: ShotStatus;
 };
 
-export const attack = (game: Game, template: ResponseTemplate, db: Database) => {
+export const attack = (
+  game: Game,
+  template: ResponseTemplate,
+  db: Database,
+) => {
   const responseType = responseTypes.attack as ResponseTypes;
   const responseData = JSON.stringify(template);
   game.gameUsers.forEach((gameUser) => {

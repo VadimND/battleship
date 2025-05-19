@@ -1,7 +1,11 @@
-import { GameMessage } from 'game_server/database/games';
-import { Database } from 'game_server/database/db';
-import { responseTypes, ResponseTypes, sendMessageToUser } from 'game_server/responses/responses';
-import botAddShips from 'game_server/bot/addships';
+import { GameMessage } from "../database/games";
+import { Database } from "../database/db";
+import {
+  responseTypes,
+  ResponseTypes,
+  sendMessageToUser,
+} from "../responses/responses";
+import botAddShips from "../bot/adships";
 
 export type MessageCreateGame = {
   idGame: number;
@@ -12,7 +16,7 @@ export const createGame = (gameMessage: GameMessage, db: Database) => {
   const responseType = responseTypes.create_game as ResponseTypes;
   const dataTemplate = {
     idGame: gameMessage.game.idGame,
-    idPlayer: '',
+    idPlayer: "",
   };
 
   const users = gameMessage.game.gameUsers;

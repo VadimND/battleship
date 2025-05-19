@@ -1,10 +1,10 @@
-import attack, { CellStatus, MessageData } from 'game_server/requests/attack';
-import { Database } from '../database/db';
-import { Answer, emptyAnswer, emptyRequest } from '../requests/requests';
+import attack, { CellStatus, MessageData } from "../requests/attack";
+import { Database } from "../database/db";
+import { Answer, emptyAnswer, emptyRequest } from "../requests/requests";
 
 const botAttack = (data: MessageData, db: Database): Answer => {
   const answer = emptyAnswer();
-  answer.ident = 'Bot Attack';
+  answer.ident = "Bot Attack";
 
   const messageData = data;
 
@@ -23,15 +23,19 @@ const botAttack = (data: MessageData, db: Database): Answer => {
     return answer;
   }
 
-  const player = game.gameUsers.find((user) => user.index === messageData.indexPlayer);
+  const player = game.gameUsers.find(
+    (user) => user.index === messageData.indexPlayer,
+  );
   const enemySquare = player!.squareEnemy;
 
   const emptyCells: number[] = [];
   const fullCells: number[] = [];
   for (let i = 0; i < 10; i += 1) {
     for (let l = 0; l < 10; l += 1) {
-      if (enemySquare[i][l] === CellStatus.indexOf('empty')) emptyCells.push(i * 10 + l);
-      else if (enemySquare[i][l] === CellStatus.indexOf('shot')) fullCells.push(i * 10 + l);
+      if (enemySquare[i][l] === CellStatus.indexOf("empty"))
+        emptyCells.push(i * 10 + l);
+      else if (enemySquare[i][l] === CellStatus.indexOf("shot"))
+        fullCells.push(i * 10 + l);
     }
   }
 
@@ -51,10 +55,10 @@ const botAttack = (data: MessageData, db: Database): Answer => {
   messageData.y = Math.floor((randomNumber - messageData.x) / 10);
 
   const request = emptyRequest();
-  request.type = 'attack';
+  request.type = "attack";
   request.data = messageData;
   const result = attack(request, db);
-  result.message = 'Bot Attack: ' + result.message;
+  result.message = "Bot Attack: " + result.message;
 
   console.log(result.message);
 
@@ -67,15 +71,25 @@ function getRandomNumber(min: number, max: number): number {
   return Math.floor(Math.random() * (max - min) + min);
 }
 
-function finishShip(randomNumber: number, fullCells: number[], enemySquare: number[][]) {
-  const fullDestroyed = CellStatus.indexOf('shot');
+function finishShip(
+  randomNumber: number,
+  fullCells: number[],
+  enemySquare: number[][],
+) {
+  const fullDestroyed = CellStatus.indexOf("shot");
   const x = fullCells[0] % 10;
   const y = Math.floor((fullCells[0] - x) / 10);
   const direction = { xl: 0, xr: 0, yu: 0, yd: 0 };
-  if ((x > 0 && enemySquare[y][x - 1] === fullDestroyed) || (x < 9 && enemySquare[y][x + 1] === fullDestroyed)) {
+  if (
+    (x > 0 && enemySquare[y][x - 1] === fullDestroyed) ||
+    (x < 9 && enemySquare[y][x + 1] === fullDestroyed)
+  ) {
     direction.xl = 1;
     direction.xr = 1;
-  } else if ((y > 0 && enemySquare[y - 1][x] === fullDestroyed) || (y < 9 && enemySquare[y + 1][x] === fullDestroyed)) {
+  } else if (
+    (y > 0 && enemySquare[y - 1][x] === fullDestroyed) ||
+    (y < 9 && enemySquare[y + 1][x] === fullDestroyed)
+  ) {
     direction.yu = 1;
     direction.yd = 1;
   } else {
@@ -89,8 +103,12 @@ function finishShip(randomNumber: number, fullCells: number[], enemySquare: numb
   return result;
 }
 
-function getEmptyCellsAround(x: number, y: number, enemySquare: number[][]): number[] {
-  const empty = CellStatus.indexOf('empty');
+function getEmptyCellsAround(
+  x: number,
+  y: number,
+  enemySquare: number[][],
+): number[] {
+  const empty = CellStatus.indexOf("empty");
   const result: number[] = [];
   if (x > 0 && enemySquare[y][x - 1] === empty) result.push(y * 10 + x - 1);
   if (x < 9 && enemySquare[y][x + 1] === empty) result.push(y * 10 + x + 1);
@@ -105,7 +123,7 @@ const getEmptyCell = (
   x: number,
   direction: { xl: number; xr: number; yu: number; yd: number },
 ): number => {
-  const empty = CellStatus.indexOf('empty');
+  const empty = CellStatus.indexOf("empty");
   let result = -1;
   let { xl, xr, yu, yd } = direction;
   while (xl + xr + yu + yd > 0 && result < 0) {

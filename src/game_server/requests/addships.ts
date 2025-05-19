@@ -1,12 +1,12 @@
-import { turn } from 'game_server/responses/turn';
-import { Database } from '../database/db';
-import { Request, Answer, emptyAnswer } from './requests';
-import { MessageDataShips } from 'game_server/database/games';
-import { startGame } from 'game_server/responses/startgame';
+import { turn } from "../responses/turn";
+import { Database } from "../database/db";
+import { Request, Answer, emptyAnswer } from "./requests";
+import { MessageDataShips } from "../database/games";
+import { startGame } from "../responses/startgame";
 
 const addShips = (request: Request, db: Database): Answer => {
   const answer = emptyAnswer();
-  answer.ident = 'Add ships';
+  answer.ident = "Add ships";
 
   const messageData = request.data as MessageDataShips;
   const gameMessage = db.games.setUserShips(messageData);
@@ -17,10 +17,12 @@ const addShips = (request: Request, db: Database): Answer => {
   }
 
   const game = gameMessage.game;
-  const enemy = game.gameUsers.find((user) => user.index !== messageData.indexPlayer);
+  const enemy = game.gameUsers.find(
+    (user) => user.index !== messageData.indexPlayer,
+  );
 
   if (enemy!.bot && enemy!.ships.length < 10) {
-    console.log('Set ships to bot');
+    console.log("Set ships to bot");
     messageData.indexPlayer = enemy!.index;
     db.games.setUserShips(messageData);
   }
@@ -32,7 +34,7 @@ const addShips = (request: Request, db: Database): Answer => {
   if (allPlayersShips) {
     startGame(game, db);
     turn(game, db);
-    answer.message = answer.message + '\nGame started';
+    answer.message = answer.message + "\nGame started";
   }
 
   return answer;

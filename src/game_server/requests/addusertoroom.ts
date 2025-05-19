@@ -1,7 +1,7 @@
-import { updateRoom } from 'game_server/responses/updateroom';
-import { Database } from '../database/db';
-import { Request, Answer, emptyAnswer } from './requests';
-import { createGame } from 'game_server/responses/creategame';
+import { updateRoom } from "../responses/updateroom";
+import { Database } from "../database/db";
+import { Request, Answer, emptyAnswer } from "./requests";
+import { createGame } from "../responses/creategame";
 
 type MessageData = {
   indexRoom: number;
@@ -9,7 +9,7 @@ type MessageData = {
 
 const addUserToRoom = (request: Request, db: Database): Answer => {
   const answer = emptyAnswer();
-  answer.ident = 'Add user to room';
+  answer.ident = "Add user to room";
 
   const userMessage = db.users.getUserByWs(request.ws!);
   if (!userMessage.isCorrect) {
@@ -40,7 +40,7 @@ const addUserToRoom = (request: Request, db: Database): Answer => {
     createGame(gameMessage, db);
     updateRoom(db);
     answer.isCorrect = true;
-    answer.message = 'Game created';
+    answer.message = "Game created";
   }
 
   return answer;

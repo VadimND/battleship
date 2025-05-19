@@ -1,13 +1,13 @@
-import { v4 } from 'uuid';
-import { emptyUser, PlayerMessage } from 'game_server/database/users';
-import { Database } from '../database/db';
-import { Request, Answer, emptyAnswer } from './requests';
-import { updateRoom } from 'game_server/responses/updateroom';
-import { createGame } from 'game_server/responses/creategame';
+import { v4 } from "uuid";
+import { emptyUser, PlayerMessage } from "../database/users";
+import { Database } from "../database/db";
+import { Request, Answer, emptyAnswer } from "./requests";
+import { updateRoom } from "../responses/updateroom";
+import { createGame } from "../responses/creategame";
 
 const singlePlay = (request: Request, db: Database): Answer => {
   const answer = emptyAnswer();
-  answer.ident = 'Single Play';
+  answer.ident = "Single Play";
   const bot = addBot(db);
   if (!bot.isCorrect) {
     answer.isCorrect = false;
@@ -55,7 +55,7 @@ const singlePlay = (request: Request, db: Database): Answer => {
   createGame(gameMessage, db);
 
   answer.isCorrect = true;
-  answer.message = 'Game created';
+  answer.message = "Game created";
 
   return answer;
 };

@@ -1,4 +1,4 @@
-import { WebSocket } from 'ws';
+import { WebSocket } from "ws";
 
 export type UserWs = {
   name: string;
@@ -21,9 +21,9 @@ export type Winner = {
 
 export const emptyUser = (): User => {
   return {
-    index: '',
-    name: '',
-    password: '',
+    index: "",
+    name: "",
+    password: "",
     score: 0,
     ws: null,
     bot: false,
@@ -40,7 +40,7 @@ export const playerMessage = (): PlayerMessage => {
   return {
     isCorrect: false,
     user: emptyUser(),
-    message: '',
+    message: "",
   };
 };
 
@@ -127,13 +127,13 @@ export class Users {
     const result = playerMessage();
     if (!index) {
       result.isCorrect = false;
-      result.message = 'Incorrect User information received';
+      result.message = "Incorrect User information received";
       return result;
     }
     const user = this._records.get(index);
     if (!user) {
       result.isCorrect = false;
-      result.message = 'User not found';
+      result.message = "User not found";
       return result;
     }
     result.isCorrect = true;
@@ -147,7 +147,7 @@ export class Users {
     if (!playerMessage.isCorrect) return playerMessage;
     this._records.delete(index);
     playerMessage.isCorrect = true;
-    playerMessage.message = '';
+    playerMessage.message = "";
     return playerMessage;
   };
 
@@ -176,7 +176,8 @@ export class Users {
   public getAllWinners = (): Winner[] => {
     const models: Winner[] = [];
     this._records.forEach((record: User) => {
-      if (record.score > 0) models.push({ name: record.name, wins: record.score });
+      if (record.score > 0)
+        models.push({ name: record.name, wins: record.score });
     });
     models.sort((a, b) => {
       return b.wins - a.wins;
@@ -188,7 +189,7 @@ export class Users {
     const result = playerMessage();
     if (!uws) {
       result.isCorrect = false;
-      result.message = 'Incorrect User socket received';
+      result.message = "Incorrect User socket received";
       return result;
     }
     let user = emptyUser();
@@ -197,7 +198,7 @@ export class Users {
     });
     if (!user.index) {
       result.isCorrect = false;
-      result.message = 'User not found';
+      result.message = "User not found";
       return result;
     }
     result.isCorrect = true;
@@ -206,7 +207,10 @@ export class Users {
     return result;
   };
 
-  public checkUserByIndexAndPassword = (index: string, password: string): boolean => {
+  public checkUserByIndexAndPassword = (
+    index: string,
+    password: string,
+  ): boolean => {
     if (!index) return false;
     const user = this._records.get(index);
     if (!user) return false;
@@ -218,7 +222,7 @@ export class Users {
     result.user = newUser;
     if (newUser.name.length < 5 || !newUser.password) {
       result.isCorrect = false;
-      result.message = 'Incorrect User information received';
+      result.message = "Incorrect User information received";
       return result;
     }
     result.isCorrect = true;

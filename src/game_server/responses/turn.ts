@@ -1,8 +1,8 @@
-import { Game } from 'game_server/database/games';
-import { Database } from '../database/db';
-import { responseTypes, ResponseTypes, sendMessageToUser } from './responses';
-import botAttack from 'game_server/bot/attack';
-import { MessageData } from 'game_server/requests/attack';
+import { Game } from "../database/games";
+import { Database } from "../database/db";
+import { responseTypes, ResponseTypes, sendMessageToUser } from "./responses";
+import botAttack from "../bot/attack";
+import { MessageData } from "../requests/attack";
 
 export const turn = (game: Game, db: Database) => {
   const responseType = responseTypes.turn as ResponseTypes;

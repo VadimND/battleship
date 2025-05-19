@@ -1,24 +1,24 @@
-import { WebSocket } from 'ws';
-import { Database } from '../database/db';
-import reg from './reg';
-import regOut from './regout';
-import createRoom from './createroom';
-import addUserToRoom from './addusertoroom';
-import addShips from './addships';
-import attack from './attack';
-import randomAttack from './randomattack';
-import singlePlay from './singleplay';
+import { WebSocket } from "ws";
+import { Database } from "../database/db";
+import reg from "./reg";
+import regOut from "./regout";
+import createRoom from "./createroom";
+import addUserToRoom from "./addusertoroom";
+import addShips from "./addships";
+import attack from "./attack";
+import randomAttack from "./randomattack";
+import singlePlay from "./singleplay";
 
 export const requestTypes = {
-  empty: 'empty',
-  regOut: 'regOut',
-  reg: 'reg',
-  create_room: 'create_room',
-  add_user_to_room: 'add_user_to_room',
-  add_ships: 'add_ships',
-  attack: 'attack',
-  randomAttack: 'randomAttack',
-  single_play: 'single_play',
+  empty: "empty",
+  regOut: "regOut",
+  reg: "reg",
+  create_room: "create_room",
+  add_user_to_room: "add_user_to_room",
+  add_ships: "add_ships",
+  attack: "attack",
+  randomAttack: "randomAttack",
+  single_play: "single_play",
 };
 
 export type Request = {
@@ -39,19 +39,19 @@ export type Answer = {
 export const emptyAnswer = (): Answer => {
   return {
     isCorrect: false,
-    ident: '',
-    message: '',
+    ident: "",
+    message: "",
   };
 };
 
 export const emptyRequest = (): Request => {
   return {
     isCorrect: false,
-    type: requestTypes.empty as Request['type'],
+    type: requestTypes.empty as Request["type"],
     data: {},
     id: 0,
     ws: null,
-    answer: 'Not allowed',
+    answer: "Not allowed",
   };
 };
 
@@ -81,7 +81,11 @@ const parseRequest = (requestData: string, userWs: WebSocket) => {
   return result;
 };
 
-export const processingRequest = (requestData: string, userWs: WebSocket, db: Database) => {
+export const processingRequest = (
+  requestData: string,
+  userWs: WebSocket,
+  db: Database,
+) => {
   const message = parseRequest(requestData, userWs);
   if (!message.isCorrect) {
     if (message.answer) console.error(message.answer);
@@ -122,7 +126,8 @@ export const processingRequest = (requestData: string, userWs: WebSocket, db: Da
       if (result.message) console.log(result.message);
     } else {
       if (result.message) console.error(result.message);
-      else console.error(`Something went wrong while processing ${result.ident}`);
+      else
+        console.error(`Something went wrong while processing ${result.ident}`);
     }
   }
 };

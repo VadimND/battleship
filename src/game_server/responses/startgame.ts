@@ -1,6 +1,6 @@
-import { Game } from 'game_server/database/games';
-import { Database } from '../database/db';
-import { responseTypes, ResponseTypes, sendMessageToUser } from './responses';
+import { Game } from "../database/games";
+import { Database } from "../database/db";
+import { responseTypes, ResponseTypes, sendMessageToUser } from "./responses";
 
 export const startGame = (game: Game, db: Database) => {
   const responseType = responseTypes.start_game as ResponseTypes;

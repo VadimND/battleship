@@ -1,6 +1,6 @@
-import { WebSocket, WebSocketServer } from 'ws';
-import { processingRequest } from './requests/requests';
-import { database } from './database/db';
+import { WebSocket, WebSocketServer } from "ws";
+import { processingRequest } from "./requests/requests";
+import { database } from "./database/db";
 
 export function gameServer(gameServerPort: number) {
   const db = database;
@@ -10,23 +10,27 @@ export function gameServer(gameServerPort: number) {
     clientTracking: true,
   });
 
-  gameServer.on('connection', (playerSocket: WebSocket) => {
-    console.log(`Connected player. Active connections ${gameServer.clients.size}`);
+  gameServer.on("connection", (playerSocket: WebSocket) => {
+    console.log(
+      `Connected player. Active connections ${gameServer.clients.size}`,
+    );
 
-    playerSocket.on('message', (data) => {
+    playerSocket.on("message", (data) => {
       const requestData = data.toString();
       processingRequest(requestData, playerSocket, db);
     });
 
-    playerSocket.on('close', () => {
-      const requestData = JSON.stringify({ type: 'regOut', data: '{}' });
+    playerSocket.on("close", () => {
+      const requestData = JSON.stringify({ type: "regOut", data: "{}" });
       processingRequest(requestData, playerSocket, db);
-      console.log(`Disconnected player. Active connections ${gameServer.clients.size}`);
+      console.log(
+        `Disconnected player. Active connections ${gameServer.clients.size}`,
+      );
     });
   });
 
-  gameServer.on('listening', () => {
-    console.log('\nBattleship is ready to play!');
-    console.log('Go to: http://localhost:8181/\n');
+  gameServer.on("listening", () => {
+    console.log("\nBattleship is ready to play!");
+    console.log("Go to: http://localhost:8181/\n");
   });
 }

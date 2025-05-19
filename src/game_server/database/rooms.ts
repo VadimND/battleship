@@ -1,11 +1,11 @@
-import { User } from './users';
+import { User } from "./users";
 
 export type RoomUser = { name: string; index: string; bot: boolean };
 
 export const roomUser = (): RoomUser => {
   return {
-    name: '',
-    index: '',
+    name: "",
+    index: "",
     bot: false,
   };
 };
@@ -32,7 +32,7 @@ export const roomMessage = (): RoomMessage => {
   return {
     isCorrect: false,
     room: emptyRoom(),
-    message: '',
+    message: "",
   };
 };
 
@@ -60,7 +60,7 @@ export class Rooms {
     const check = this.checkUserAlreadyInRoom(roomUser.index as string);
     if (check) {
       result.isCorrect = false;
-      result.message = 'Failed to create room. User already in room';
+      result.message = "Failed to create room. User already in room";
       return result;
     }
 
@@ -77,7 +77,9 @@ export class Rooms {
     if (!this.checkUserAlreadyInRoom(indexUser)) return false;
     const result = true;
     this._records.forEach((record: Room) => {
-      record.roomUsers = record.roomUsers.filter((user) => user.index !== indexUser);
+      record.roomUsers = record.roomUsers.filter(
+        (user) => user.index !== indexUser,
+      );
     });
     return result;
   };
@@ -86,7 +88,8 @@ export class Rooms {
     if (!indexUser) return false;
     let result = false;
     this._records.forEach((record: Room) => {
-      if (record.roomUsers.filter((user) => user.index === indexUser).length) result = true;
+      if (record.roomUsers.filter((user) => user.index === indexUser).length)
+        result = true;
     });
     return result;
   };
@@ -96,7 +99,8 @@ export class Rooms {
     let result = false;
     let indexRoom = 0;
     this._records.forEach((record: Room) => {
-      if (record.roomUsers.filter((user) => user.index === indexUser).length) indexRoom = record.roomId;
+      if (record.roomUsers.filter((user) => user.index === indexUser).length)
+        indexRoom = record.roomId;
     });
     if (indexRoom > 0) {
       result = this.closeRoom(indexRoom).isCorrect;
@@ -104,13 +108,19 @@ export class Rooms {
     return result;
   };
 
-  public addUserToRoom = (roomIndex: number, roomUser: RoomUser): RoomMessage => {
+  public addUserToRoom = (
+    roomIndex: number,
+    roomUser: RoomUser,
+  ): RoomMessage => {
     const result = this.getRoomByIndex(roomIndex);
     if (!result.isCorrect) return result;
 
-    if (result.room.roomUsers.filter((user) => user.index === roomUser.index).length) {
+    if (
+      result.room.roomUsers.filter((user) => user.index === roomUser.index)
+        .length
+    ) {
       result.isCorrect = false;
-      result.message = 'User already in this room';
+      result.message = "User already in this room";
       return result;
     }
 
@@ -124,13 +134,13 @@ export class Rooms {
     const result = roomMessage();
     if (!index) {
       result.isCorrect = false;
-      result.message = 'Incorrect Room index received';
+      result.message = "Incorrect Room index received";
       return result;
     }
     const room = this._records.get(index);
     if (!room) {
       result.isCorrect = false;
-      result.message = 'Room not found';
+      result.message = "Room not found";
       return result;
     }
     result.isCorrect = true;
@@ -144,7 +154,7 @@ export class Rooms {
     if (!roomMessage.isCorrect) return roomMessage;
     this._records.delete(index);
     roomMessage.isCorrect = true;
-    roomMessage.message = '';
+    roomMessage.message = "";
     return roomMessage;
   };
 

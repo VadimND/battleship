@@ -1,6 +1,6 @@
-import { Room } from './rooms';
+import { Room } from "./rooms";
 
-export type ShipType = 'small' | 'medium' | 'large' | 'huge';
+export type ShipType = "small" | "medium" | "large" | "huge";
 export type Ship = {
   position: {
     x: number;
@@ -12,9 +12,9 @@ export type Ship = {
 };
 export const ship = (type: ShipType): Ship => {
   let length = 1;
-  if (type === 'huge') length = 4;
-  else if (type === 'large') length = 3;
-  else if (type === 'medium') length = 2;
+  if (type === "huge") length = 4;
+  else if (type === "large") length = 3;
+  else if (type === "medium") length = 2;
   const result = {
     position: {
       x: -1,
@@ -36,7 +36,7 @@ export const messageDataShips = (): MessageDataShips => {
   return {
     gameId: 0,
     ships: [],
-    indexPlayer: '',
+    indexPlayer: "",
   };
 };
 
@@ -65,8 +65,8 @@ export type GameUser = {
 
 export const gameUser = (): GameUser => {
   return {
-    name: '',
-    index: '',
+    name: "",
+    index: "",
     ships: [],
     square: squareEmpty(),
     squareEnemy: squareEmpty(),
@@ -98,11 +98,11 @@ export const gameMessage = (): GameMessage => {
   return {
     isCorrect: false,
     game: emptyGame(),
-    message: '',
+    message: "",
   };
 };
 
-export type ShotStatus = 'miss' | 'killed' | 'shot';
+export type ShotStatus = "miss" | "killed" | "shot";
 
 export type ShotResult = {
   position: {
@@ -128,14 +128,14 @@ export class Games {
 
     if (room.roomUsers.length < 2) {
       result.isCorrect = false;
-      result.message = 'Failed to create game. Not all users in room';
+      result.message = "Failed to create game. Not all users in room";
       return result;
     }
 
     const check = this.checkUsersAlreadyInGame(room);
     if (check) {
       result.isCorrect = false;
-      result.message = 'Failed to create game. User already in game';
+      result.message = "Failed to create game. User already in game";
       return result;
     }
 
@@ -157,7 +157,11 @@ export class Games {
     let result = false;
     this._records.forEach((record: Game) => {
       room.roomUsers.forEach((userRoom) => {
-        if (record.gameUsers.filter((user) => user.index === userRoom.index).length) result = true;
+        if (
+          record.gameUsers.filter((user) => user.index === userRoom.index)
+            .length
+        )
+          result = true;
       });
     });
     return result;
@@ -187,13 +191,13 @@ export class Games {
     const result = gameMessage();
     if (!index) {
       result.isCorrect = false;
-      result.message = 'Incorrect Game index received';
+      result.message = "Incorrect Game index received";
       return result;
     }
     const game = this._records.get(index);
     if (!game) {
       result.isCorrect = false;
-      result.message = 'Game not found';
+      result.message = "Game not found";
       return result;
     }
     result.isCorrect = true;
@@ -206,19 +210,21 @@ export class Games {
     const result = gameMessage();
     if (!messageData.gameId) {
       result.isCorrect = false;
-      result.message = 'Incorrect Game gameId received';
+      result.message = "Incorrect Game gameId received";
       return result;
     }
     const game = this._records.get(messageData.gameId);
     if (!game) {
       result.isCorrect = false;
-      result.message = 'Game not found';
+      result.message = "Game not found";
       return result;
     }
-    const player = game.gameUsers.find((user) => user.index === messageData.indexPlayer);
+    const player = game.gameUsers.find(
+      (user) => user.index === messageData.indexPlayer,
+    );
     if (!player) {
       result.isCorrect = false;
-      result.message = 'Player not found in game';
+      result.message = "Player not found in game";
       return result;
     }
     player.ships = messageData.ships;
@@ -230,23 +236,31 @@ export class Games {
     return result;
   };
 
-  public setAttackResult = (gameResult: Game, shotResult: ShotResult, status: number): GameMessage => {
+  public setAttackResult = (
+    gameResult: Game,
+    shotResult: ShotResult,
+    status: number,
+  ): GameMessage => {
     const gameMessage = this.getGameByIndex(gameResult.idGame);
     if (!gameMessage.isCorrect) {
       return gameMessage;
     }
 
     const game = gameMessage.game;
-    const player = game.gameUsers.find((user) => user.index === shotResult.currentPlayer);
+    const player = game.gameUsers.find(
+      (user) => user.index === shotResult.currentPlayer,
+    );
     if (!player) {
       gameMessage.isCorrect = false;
-      gameMessage.message = 'Player not found in game';
+      gameMessage.message = "Player not found in game";
       return gameMessage;
     }
-    const enemy = game.gameUsers.find((user) => user.index !== shotResult.currentPlayer);
+    const enemy = game.gameUsers.find(
+      (user) => user.index !== shotResult.currentPlayer,
+    );
     if (!enemy) {
       gameMessage.isCorrect = false;
-      gameMessage.message = 'Player not found in game';
+      gameMessage.message = "Player not found in game";
       return gameMessage;
     }
 
@@ -271,15 +285,15 @@ export class Games {
   getGameByUserIndex = (index: string): GameMessage => {
     const result = gameMessage();
     result.isCorrect = false;
-    result.message = 'Game not found';
+    result.message = "Game not found";
     if (!index) {
-      result.message = 'Incorrect User index received';
+      result.message = "Incorrect User index received";
       return result;
     }
     this._records.forEach((record: Game) => {
       if (record.gameUsers.filter((user) => user.index === index).length) {
         result.isCorrect = true;
-        result.message = '';
+        result.message = "";
         result.game = record;
       }
     });

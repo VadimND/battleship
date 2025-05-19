@@ -1,6 +1,6 @@
-import { Game } from 'game_server/database/games';
-import { Database } from '../database/db';
-import { responseTypes, ResponseTypes, sendMessageToUser } from './responses';
+import { Game } from "../database/games";
+import { Database } from "../database/db";
+import { responseTypes, ResponseTypes, sendMessageToUser } from "./responses";
 
 export type ResponseTemplate = {
   winPlayer: string;

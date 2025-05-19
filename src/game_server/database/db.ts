@@ -1,6 +1,6 @@
-import { Games } from './games';
-import { Rooms } from './rooms';
-import { Users } from './users';
+import { Games } from "./games";
+import { Rooms } from "./rooms";
+import { Users } from "./users";
 
 export type Database = {
   users: Users;

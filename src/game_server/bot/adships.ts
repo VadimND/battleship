@@ -1,30 +1,38 @@
-import { Database } from 'game_server/database/db';
-import { Answer, emptyAnswer, emptyRequest } from 'game_server/requests/requests';
-import { messageDataShips, ship, Ship, ShipType, Square, squareEmpty } from 'game_server/database/games';
-import { MessageCreateGame } from 'game_server/responses/creategame';
-import { getRandomNumber } from 'game_server/requests/randomattack';
-import addShips from 'game_server/requests/addships';
+import { Database } from "../database/db";
+import { Answer, emptyAnswer, emptyRequest } from "../requests/requests";
+import {
+  messageDataShips,
+  ship,
+  Ship,
+  ShipType,
+  Square,
+  squareEmpty,
+} from "../database/games";
+import { MessageCreateGame } from "../responses/creategame";
+import { getRandomNumber } from "../requests/randomattack";
+import addShips from "../requests/addships";
 
-const gameShips = 'huge,large,large,medium,medium,medium,small,small,small,small';
+const gameShips =
+  "huge,large,large,medium,medium,medium,small,small,small,small";
 
 const botAddShips = (request: MessageCreateGame, db: Database): Answer => {
   const answer = emptyAnswer();
-  answer.ident = 'Bot Add ships';
+  answer.ident = "Bot Add ships";
 
   const messageData = messageDataShips();
   messageData.gameId = request.idGame;
   messageData.indexPlayer = request.idPlayer;
 
   let square = squareEmpty();
-  const shipsToAdd = gameShips.split(',');
+  const shipsToAdd = gameShips.split(",");
   const ships: Ship[] = [];
   shipsToAdd.forEach((type) => {
     const newEmptyShip = ship(type as ShipType);
     const newShip = findShip(newEmptyShip, square);
     if (newShip.position.x < 0 || newShip.position.y < 0) {
       answer.isCorrect = false;
-      answer.message = 'Unable to select ship layout';
-      console.log('Bot: Unable to select ship layout');
+      answer.message = "Unable to select ship layout";
+      console.log("Bot: Unable to select ship layout");
       return answer;
     }
     ships.push(newShip);
@@ -34,18 +42,18 @@ const botAddShips = (request: MessageCreateGame, db: Database): Answer => {
 
   const requestAddShips = emptyRequest();
   requestAddShips.isCorrect = true;
-  requestAddShips.type = 'add_ships';
-  requestAddShips.answer = '';
+  requestAddShips.type = "add_ships";
+  requestAddShips.answer = "";
   requestAddShips.data = messageData;
 
-  console.log('The emblem of our game:');
+  console.log("The emblem of our game:");
   console.log(
     square
-      .map((t) => t.join(' '))
-      .join('\n')
-      .replace(/0/g, ' ')
-      .replace(/1/g, '.')
-      .replace(/2/g, 'O'),
+      .map((t) => t.join(" "))
+      .join("\n")
+      .replace(/0/g, " ")
+      .replace(/1/g, ".")
+      .replace(/2/g, "O"),
   );
   addShips(requestAddShips, db);
 
@@ -63,7 +71,8 @@ const setShipToSquare = (ship: Ship, square: Square): Square => {
     square[y][x] = 2;
     for (let ys = y - 1; ys <= y + 1; ys += 1) {
       for (let xs = x - 1; xs <= x + 1; xs += 1) {
-        if (ys >= 0 && ys < 10 && xs >= 0 && xs < 10 && square[ys][xs] === 0) square[ys][xs] = 1;
+        if (ys >= 0 && ys < 10 && xs >= 0 && xs < 10 && square[ys][xs] === 0)
+          square[ys][xs] = 1;
       }
     }
     x += dx;

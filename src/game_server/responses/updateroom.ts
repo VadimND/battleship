@@ -1,5 +1,5 @@
-import { Database } from '../database/db';
-import { responseTypes, ResponseTypes, sendMessageToUser } from './responses';
+import { Database } from "../database/db";
+import { responseTypes, ResponseTypes, sendMessageToUser } from "./responses";
 
 export const updateRoom = (db: Database) => {
   const responseType = responseTypes.update_room as ResponseTypes;

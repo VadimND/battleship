@@ -1,11 +1,11 @@
-import { turn } from 'game_server/responses/turn';
-import { Database } from '../database/db';
-import { Request, Answer, emptyAnswer } from './requests';
-import { attack as attackResponse, ShotStatus } from 'game_server/responses/attack';
-import { responseTemplate } from 'game_server/responses/attack';
-import { Square } from 'game_server/database/games';
-import { finish } from 'game_server/responses/finish';
-import { updateWinners } from 'game_server/responses/updatewinners';
+import { turn } from "../responses/turn";
+import { Database } from "../database/db";
+import { Request, Answer, emptyAnswer } from "./requests";
+import { attack as attackResponse, ShotStatus } from "../responses/attack";
+import { responseTemplate } from "../responses/attack";
+import { Square } from "../database/games";
+import { finish } from "../responses/finish";
+import { updateWinners } from "../responses/updatewinners";
 
 export type MessageData = {
   gameId: number;
@@ -14,11 +14,11 @@ export type MessageData = {
   indexPlayer: string;
 };
 
-export const CellStatus = ['empty', 'miss', 'full', 'shot', 'killed'];
+export const CellStatus = ["empty", "miss", "full", "shot", "killed"];
 
 const attack = (request: Request, db: Database): Answer => {
   const answer = emptyAnswer();
-  answer.ident = 'Attack';
+  answer.ident = "Attack";
 
   const messageData = request.data as MessageData;
 
@@ -37,25 +37,30 @@ const attack = (request: Request, db: Database): Answer => {
     return answer;
   }
 
-  const player = game.gameUsers.find((user) => user.index === messageData.indexPlayer);
-  const enemy = game.gameUsers.find((user) => user.index !== messageData.indexPlayer);
+  const player = game.gameUsers.find(
+    (user) => user.index === messageData.indexPlayer,
+  );
+  const enemy = game.gameUsers.find(
+    (user) => user.index !== messageData.indexPlayer,
+  );
   const enemySquare = enemy!.square;
   const y = messageData.y;
   const x = messageData.x;
 
-  if (CellStatus[enemySquare[y][x]] === 'shot') {
+  if (CellStatus[enemySquare[y][x]] === "shot") {
     answer.isCorrect = false;
-    answer.message = 'Skip shot on destroyed cell';
+    answer.message = "Skip shot on destroyed cell";
     return answer;
   }
 
   const shootResult = getShotResult(enemySquare, y, x);
-  if (shootResult === 'miss') {
+  if (shootResult === "miss") {
     db.games.nextTurn(game);
   }
   answer.isCorrect = true;
   if (player!.bot) answer.message = `shot with result ${shootResult}`;
-  else answer.message = `Player ${player?.name} shot with result ${shootResult}`;
+  else
+    answer.message = `Player ${player?.name} shot with result ${shootResult}`;
 
   const template = responseTemplate();
   template.position.x = x;
@@ -65,21 +70,21 @@ const attack = (request: Request, db: Database): Answer => {
   db.games.setAttackResult(game, template, CellStatus.indexOf(shootResult));
   attackResponse(game, template, db);
 
-  if (shootResult === 'killed') {
+  if (shootResult === "killed") {
     const cells = cellsForClose(enemySquare, y, x);
-    template.status = 'miss';
+    template.status = "miss";
     cells.forEach((cell) => {
       template.position.x = cell.x;
       template.position.y = cell.y;
       attackResponse(game, template, db);
-      db.games.setAttackResult(game, template, CellStatus.indexOf('miss'));
+      db.games.setAttackResult(game, template, CellStatus.indexOf("miss"));
     });
     const killedCells = markKilledShip(enemySquare, y, x);
-    template.status = 'killed';
+    template.status = "killed";
     killedCells.forEach((cell) => {
       template.position.x = cell.x;
       template.position.y = cell.y;
-      db.games.setAttackResult(game, template, CellStatus.indexOf('killed'));
+      db.games.setAttackResult(game, template, CellStatus.indexOf("killed"));
     });
   }
 
@@ -101,11 +106,15 @@ const attack = (request: Request, db: Database): Answer => {
   return answer;
 };
 
-const getShotResult = (enemySquare: Square, y: number, x: number): ShotStatus => {
+const getShotResult = (
+  enemySquare: Square,
+  y: number,
+  x: number,
+): ShotStatus => {
   const enemyPositionStatus = enemySquare[y][x];
 
-  let shootResult: ShotStatus = 'miss';
-  if (enemyPositionStatus === CellStatus.indexOf('full')) {
+  let shootResult: ShotStatus = "miss";
+  if (enemyPositionStatus === CellStatus.indexOf("full")) {
     let xl = 1;
     let xr = 1;
     let yu = 1;
@@ -130,7 +139,7 @@ const getShotResult = (enemySquare: Square, y: number, x: number): ShotStatus =>
       yu = yu + (yu > 0 ? 1 : 0);
       yd = yd + (yd > 0 ? 1 : 0);
     }
-    shootResult = isKill ? 'killed' : 'shot';
+    shootResult = isKill ? "killed" : "shot";
   }
   return shootResult;
 };
@@ -139,7 +148,7 @@ const checkWin = (square: Square) => {
   let result = true;
   for (let i = 0; i < 10; i += 1) {
     for (let l = 0; l < 10; l += 1) {
-      if (CellStatus[square[i][l]] === 'full') result = false;
+      if (CellStatus[square[i][l]] === "full") result = false;
     }
   }
   return result;
@@ -174,19 +183,37 @@ const cellsForClose = (enemySquare: Square, y: number, x: number) => {
   }
   const cells: { y: number; x: number }[] = [];
   ship.forEach((cell) => {
-    if (cell.y - 1 >= 0 && cell.x - 1 >= 0 && enemySquare[cell.y - 1][cell.x - 1] === 0)
+    if (
+      cell.y - 1 >= 0 &&
+      cell.x - 1 >= 0 &&
+      enemySquare[cell.y - 1][cell.x - 1] === 0
+    )
       cells.push({ y: cell.y - 1, x: cell.x - 1 });
     if (cell.y - 1 >= 0 && cell.x >= 0 && enemySquare[cell.y - 1][cell.x] === 0)
       cells.push({ y: cell.y - 1, x: cell.x });
-    if (cell.y - 1 >= 0 && cell.x + 1 < 10 && enemySquare[cell.y - 1][cell.x + 1] === 0)
+    if (
+      cell.y - 1 >= 0 &&
+      cell.x + 1 < 10 &&
+      enemySquare[cell.y - 1][cell.x + 1] === 0
+    )
       cells.push({ y: cell.y - 1, x: cell.x + 1 });
-    if (cell.x - 1 >= 0 && enemySquare[cell.y][cell.x - 1] === 0) cells.push({ y: cell.y, x: cell.x - 1 });
-    if (cell.x + 1 >= 0 && enemySquare[cell.y][cell.x + 1] === 0) cells.push({ y: cell.y, x: cell.x + 1 });
-    if (cell.y + 1 < 10 && cell.x - 1 >= 0 && enemySquare[cell.y + 1][cell.x - 1] === 0)
+    if (cell.x - 1 >= 0 && enemySquare[cell.y][cell.x - 1] === 0)
+      cells.push({ y: cell.y, x: cell.x - 1 });
+    if (cell.x + 1 >= 0 && enemySquare[cell.y][cell.x + 1] === 0)
+      cells.push({ y: cell.y, x: cell.x + 1 });
+    if (
+      cell.y + 1 < 10 &&
+      cell.x - 1 >= 0 &&
+      enemySquare[cell.y + 1][cell.x - 1] === 0
+    )
       cells.push({ y: cell.y + 1, x: cell.x - 1 });
     if (cell.y + 1 < 10 && cell.x >= 0 && enemySquare[cell.y + 1][cell.x] === 0)
       cells.push({ y: cell.y + 1, x: cell.x });
-    if (cell.y + 1 < 10 && cell.x + 1 < 10 && enemySquare[cell.y + 1][cell.x + 1] === 0)
+    if (
+      cell.y + 1 < 10 &&
+      cell.x + 1 < 10 &&
+      enemySquare[cell.y + 1][cell.x + 1] === 0
+    )
       cells.push({ y: cell.y + 1, x: cell.x + 1 });
   });
 
@@ -203,9 +230,13 @@ const cellsForClose = (enemySquare: Square, y: number, x: number) => {
   return result;
 };
 
-const markKilledShip = (enemySquare: Square, y: number, x: number): { x: number; y: number }[] => {
-  const killed = CellStatus.indexOf('killed');
-  const shot = CellStatus.indexOf('shot');
+const markKilledShip = (
+  enemySquare: Square,
+  y: number,
+  x: number,
+): { x: number; y: number }[] => {
+  const killed = CellStatus.indexOf("killed");
+  const shot = CellStatus.indexOf("shot");
   enemySquare[y][x] = killed;
 
   const result: { x: number; y: number }[] = [{ x, y }];

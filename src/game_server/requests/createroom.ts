@@ -1,10 +1,10 @@
-import { updateRoom } from 'game_server/responses/updateroom';
-import { Database } from '../database/db';
-import { Request, Answer, emptyAnswer } from './requests';
+import { updateRoom } from "../responses/updateroom";
+import { Database } from "../database/db";
+import { Request, Answer, emptyAnswer } from "./requests";
 
 const createRoom = (request: Request, db: Database): Answer => {
   const answer = emptyAnswer();
-  answer.ident = 'Create new room';
+  answer.ident = "Create new room";
 
   const userMessage = db.users.getUserByWs(request.ws!);
   if (!userMessage.isCorrect) {

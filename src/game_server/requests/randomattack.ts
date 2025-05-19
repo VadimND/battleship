@@ -1,10 +1,10 @@
-import { Database } from '../database/db';
-import { Request, Answer, emptyAnswer } from './requests';
-import attack, { MessageData } from './attack';
+import { Database } from "../database/db";
+import { Request, Answer, emptyAnswer } from "./requests";
+import attack, { MessageData } from "./attack";
 
 const randomAttack = (request: Request, db: Database): Answer => {
   const answer = emptyAnswer();
-  answer.ident = 'Attack';
+  answer.ident = "Attack";
 
   const messageData = request.data as MessageData;
 
@@ -23,7 +23,9 @@ const randomAttack = (request: Request, db: Database): Answer => {
     return answer;
   }
 
-  const player = game.gameUsers.find((user) => user.index === messageData.indexPlayer);
+  const player = game.gameUsers.find(
+    (user) => user.index === messageData.indexPlayer,
+  );
   const enemySquare = player!.squareEnemy;
 
   const emptyCells: number[] = [];
@@ -42,10 +44,10 @@ const randomAttack = (request: Request, db: Database): Answer => {
   messageData.x = randomNumber % 10;
   messageData.y = Math.floor((randomNumber - messageData.x) / 10);
 
-  request.type = 'randomAttack';
+  request.type = "randomAttack";
   request.data = messageData;
   const result = attack(request, db);
-  result.message = 'Random Attack: ' + result.message;
+  result.message = "Random Attack: " + result.message;
 
   return result;
 };
