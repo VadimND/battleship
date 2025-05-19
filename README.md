@@ -7,7 +7,7 @@
 
 1. `git clone https://github.com/VadimND/battleship.git`
 2. `cd battleship`
-3. `git checkout battleship`
+3. `git checkout dev`
 4. `npm install`
 
 ## Usage
